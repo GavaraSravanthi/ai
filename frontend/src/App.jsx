@@ -21,7 +21,8 @@ import {
 } from "recharts";
 import "./App.css";
 
-const safeJsonParse = (value, fallback) => {
+// Renamed to safeJsonParseHelper to avoid conflicts
+const safeJsonParseHelper = (value, fallback) => {
   try {
     if (!value || value === "undefined" || value === "null") {
       return fallback;
@@ -35,8 +36,10 @@ const safeJsonParse = (value, fallback) => {
 
 function App() {
   const [currentUser, setCurrentUser] = useState(
-    safeJsonParse(localStorage.getItem("studyUser"), null)
+    // Using the new name here
+    safeJsonParseHelper(localStorage.getItem("studyUser"), null)
   );
+  // ... rest of your code
   const [authMode, setAuthMode] = useState("login");
   const [authName, setAuthName] = useState("");
   const [authEmail, setAuthEmail] = useState("");
