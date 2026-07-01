@@ -318,7 +318,7 @@ function App() {
     if (!currentUser?.id) return;
 
     try {
-      const response = await fetch(`http://127.0.0.1:5000/profile/${currentUser.id}`);
+      const response = await fetch(`https://ai-study-planner-rja9.onrender.com/profile/${currentUser.id}`);
       const data = await response.json();
 
       if (data.success && data.user) {
