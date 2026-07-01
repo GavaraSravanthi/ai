@@ -8,8 +8,7 @@ import os
 import json
 import re
 from datetime import datetime
-from google import genai
-
+import google.generativeai as genai
 load_dotenv()
 
 app = Flask(__name__)
