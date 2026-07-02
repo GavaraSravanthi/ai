@@ -23,6 +23,7 @@ import {
   Cell,
 } from "recharts";
 import "./App.css";
+
 const safeJsonParse = (value, fallback) => {
   try {
     if (!value || value === "undefined" || value === "null") {
@@ -34,12 +35,6 @@ const safeJsonParse = (value, fallback) => {
     return fallback;
   }
 };
-
-const safeJsonParse = (value, fallback) => {
-  try {
-    if (!value || value === "undefined" || value === "null") {
-      return fallback;
-    }
     return JSON.parse(value);
   } catch (error) {
     console.error("Invalid localStorage JSON:", error);
