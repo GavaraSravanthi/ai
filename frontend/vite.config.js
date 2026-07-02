@@ -3,10 +3,5 @@ import react from '@vitejs/plugin-react'
 
 export default defineConfig({
   plugins: [react()],
-  server: {
-    allowedHosts: ['ai-study-planner-2026.onrender.com']
-  },
-  preview: {
-    allowedHosts: ['ai-study-planner-2026.onrender.com']
-  }
+  base: './', // Use './' for relative paths, which is safer for Static Sites
 })
