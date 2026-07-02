@@ -24,6 +24,7 @@ import {
 } from "recharts";
 import "./App.css";
 
+// Ensure ONLY ONE safeJsonParse function exists and it is complete
 const safeJsonParse = (value, fallback) => {
   try {
     if (!value || value === "undefined" || value === "null") {
@@ -35,12 +36,7 @@ const safeJsonParse = (value, fallback) => {
     return fallback;
   }
 };
-    return JSON.parse(value);
-  } catch (error) {
-    console.error("Invalid localStorage JSON:", error);
-    return fallback;
-  }
-};
+
 
 function App() {
   const [currentUser, setCurrentUser] = useState(
