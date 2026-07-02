@@ -3,8 +3,10 @@ import react from '@vitejs/plugin-react'
 
 export default defineConfig({
   plugins: [react()],
-  build: {
-    // Force the stable rollup bundler, bypassing rolldown
-    rollupOptions: {} 
+  server: {
+    allowedHosts: ['ai-study-planner-2026.onrender.com']
+  },
+  preview: {
+    allowedHosts: ['ai-study-planner-2026.onrender.com']
   }
 })
