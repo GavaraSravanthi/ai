@@ -2,6 +2,9 @@ import { useState, useEffect } from "react";
 import jsPDF from "jspdf";
 import Calendar from "react-calendar";
 import "react-calendar/dist/Calendar.css";
+import ReactMarkdown from "react-markdown";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import {
   BarChart,
   Bar,
@@ -20,9 +23,7 @@ import {
   Cell,
 } from "recharts";
 import "./App.css";
-
-// Renamed to safeJsonParseHelper to avoid conflicts
-const safeJsonParseHelper = (value, fallback) => {
+const safeJsonParse = (value, fallback) => {
   try {
     if (!value || value === "undefined" || value === "null") {
       return fallback;
@@ -34,12 +35,22 @@ const safeJsonParseHelper = (value, fallback) => {
   }
 };
 
+const safeJsonParse = (value, fallback) => {
+  try {
+    if (!value || value === "undefined" || value === "null") {
+      return fallback;
+    }
+    return JSON.parse(value);
+  } catch (error) {
+    console.error("Invalid localStorage JSON:", error);
+    return fallback;
+  }
+};
+
 function App() {
   const [currentUser, setCurrentUser] = useState(
-    // Using the new name here
-    safeJsonParseHelper(localStorage.getItem("studyUser"), null)
+    safeJsonParse(localStorage.getItem("studyUser"), null)
   );
-  // ... rest of your code
   const [authMode, setAuthMode] = useState("login");
   const [authName, setAuthName] = useState("");
   const [authEmail, setAuthEmail] = useState("");
@@ -307,7 +318,7 @@ function App() {
     if (!currentUser?.id) return;
 
     try {
-      const response = await fetch(`http://127.0.0.1:5000/profile/${currentUser.id}`);
+      const response = await fetch(`https://ai-study-planner-rja9.onrender.com/profile/${currentUser.id}`);
       const data = await response.json();
 
       if (data.success && data.user) {
@@ -334,7 +345,7 @@ function App() {
 
   const updateProfile = async () => {
     if (!profileName.trim()) {
-      alert("Name is required");
+      toast.warning("Name is required");
       return;
     }
 
@@ -354,15 +365,15 @@ function App() {
       const data = await response.json();
 
       if (!response.ok || !data.success) {
-        alert(data.message || "Profile update failed");
+        toast.error(data.message || "Profile update failed");
         return;
       }
 
       localStorage.setItem("studyUser", JSON.stringify(data.user));
       setCurrentUser(data.user);
-      alert("Profile updated successfully");
+      toast.success("Profile updated successfully");
     } catch (error) {
-      alert("Backend error. Check Flask server.");
+      toast.error("Backend error. Check Flask server.");
       console.log(error);
     } finally {
       setProfileSaving(false);
@@ -371,12 +382,12 @@ function App() {
 
   const handleAuth = async () => {
     if (!authEmail || !authPassword || (authMode === "register" && !authName)) {
-      alert("Please fill all required fields");
+      toast.warning("Please fill all required fields");
       return;
     }
 
     if (authMode === "register" && authPassword.length < 6) {
-      alert("Password must be at least 6 characters");
+      toast.warning("Password must be at least 6 characters");
       return;
     }
 
@@ -399,7 +410,7 @@ function App() {
       const data = await response.json();
 
       if (!response.ok || !data.success) {
-        alert(data.message || "Authentication failed");
+        toast.error(data.message || "Authentication failed");
         return;
       }
 
@@ -411,8 +422,9 @@ function App() {
       setAuthEmail("");
       setAuthPassword("");
       setActivePage("dashboard");
+      toast.success(authMode === "login" ? "Login successful" : "Registration successful");
     } catch (error) {
-      alert("Backend error. Check Flask server.");
+      toast.error("Backend error. Check Flask server.");
       console.log(error);
     } finally {
       setAuthLoading(false);
@@ -463,12 +475,12 @@ function App() {
 
   const generatePlan = async () => {
     if (!subjects || !hours || !weakSubjects || !examDate) {
-      alert("Please fill all fields");
+      toast.warning("Please fill all fields");
       return;
     }
 
     if (Number(hours) <= 0 || Number(hours) > 24) {
-      alert("Study hours must be between 1 and 24");
+      toast.warning("Study hours must be between 1 and 24");
       return;
     }
 
@@ -493,6 +505,7 @@ function App() {
       const data = await response.json();
 
       setPlan(data.plan);
+      toast.success("Study plan generated successfully");
 
       if (data.daysLeft) {
         setDynamicDays(data.daysLeft);
@@ -503,7 +516,7 @@ function App() {
       setActivePage("planner");
       addActivity("🧠", `Generated study plan for ${subjects}`);
     } catch (error) {
-      alert("Backend error. Check Flask server.");
+      toast.error("Backend error. Check Flask server.");
       console.log(error);
     } finally {
       setLoading(false);
@@ -512,7 +525,7 @@ function App() {
 
   const downloadPDF = () => {
     if (!plan) {
-      alert("Generate a study plan first");
+      toast.warning("Generate a study plan first");
       return;
     }
 
@@ -546,7 +559,7 @@ function App() {
 
   const generateNotes = async () => {
     if (!notesSubject || !notesTopic) {
-      alert("Please enter subject and topic");
+      toast.warning("Please enter subject and topic");
       return;
     }
 
@@ -567,9 +580,10 @@ function App() {
 
       const data = await response.json();
       setNotes(data.notes);
+      toast.success("Notes generated successfully");
       addActivity("📚", `Generated notes: ${notesSubject} - ${notesTopic}`);
     } catch (error) {
-      alert("Notes generation failed.");
+      toast.error("Notes generation failed.");
       console.log(error);
     } finally {
       setNotesLoading(false);
@@ -578,7 +592,7 @@ function App() {
 
   const downloadNotesPDF = () => {
     if (!notes) {
-      alert("Generate notes first");
+      toast.warning("Generate notes first");
       return;
     }
 
@@ -610,7 +624,7 @@ function App() {
 
   const generateFlashcards = async () => {
     if (!flashSubject || !flashTopic) {
-      alert("Please enter subject and topic");
+      toast.warning("Please enter subject and topic");
       return;
     }
 
@@ -633,9 +647,10 @@ function App() {
 
       const data = await response.json();
       setFlashcards(data.flashcards || []);
+      toast.success("Flashcards generated successfully");
       addActivity("🧩", `Created flashcards: ${flashSubject} - ${flashTopic}`);
     } catch (error) {
-      alert("Flashcards generation failed.");
+      toast.error("Flashcards generation failed.");
       console.log(error);
     } finally {
       setFlashLoading(false);
@@ -658,7 +673,7 @@ function App() {
 
   const downloadFlashcardsPDF = () => {
     if (flashcards.length === 0) {
-      alert("Generate flashcards first");
+      toast.warning("Generate flashcards first");
       return;
     }
 
@@ -695,7 +710,7 @@ function App() {
 
   const generateInterviewQuestions = async () => {
     if (!interviewSubject) {
-      alert("Please enter interview subject");
+      toast.warning("Please enter interview subject");
       return;
     }
 
@@ -718,9 +733,10 @@ function App() {
 
       const data = await response.json();
       setInterviewQuestions(data.interview || []);
+      toast.success("Interview questions generated successfully");
       addActivity("🎤", `Generated interview prep for ${interviewSubject}`);
     } catch (error) {
-      alert("Interview questions generation failed.");
+      toast.error("Interview questions generation failed.");
       console.log(error);
     } finally {
       setInterviewLoading(false);
@@ -743,7 +759,7 @@ function App() {
 
   const downloadInterviewPDF = () => {
     if (interviewQuestions.length === 0) {
-      alert("Generate interview questions first");
+      toast.warning("Generate interview questions first");
       return;
     }
 
@@ -780,7 +796,7 @@ function App() {
 
   const savePlan = async () => {
     if (!plan) {
-      alert("Generate a plan first");
+      toast.warning("Generate a plan first");
       return;
     }
 
@@ -799,7 +815,7 @@ function App() {
     });
 
     const data = await response.json();
-    alert(data.message);
+    toast.success(data.message);
     viewSavedPlans();
     addActivity("📁", `Saved study plan for ${subjects}`);
   };
@@ -819,7 +835,7 @@ function App() {
     });
 
     const data = await response.json();
-    alert(data.message);
+    toast.success(data.message);
     viewSavedPlans();
   };
 
@@ -852,12 +868,12 @@ function App() {
   const saveGoalSettings = () => {
     localStorage.setItem("dailyGoal", dailyGoal);
     localStorage.setItem("weeklyGoal", weeklyGoal);
-    alert("Goals saved successfully");
+    toast.success("Goals saved successfully");
   };
 
   const addStudyHours = () => {
     if (studiedToday <= 0) {
-      alert("Enter studied hours first");
+      toast.warning("Enter studied hours first");
       return;
     }
 
@@ -868,29 +884,29 @@ function App() {
     setStudyLog(updatedLog);
     localStorage.setItem("studiedToday", studiedToday);
     localStorage.setItem("studyLog", JSON.stringify(updatedLog));
-    alert("Study hours updated");
+    toast.success("Study hours updated");
     addActivity("⏱", `Updated study hours: ${studiedToday} hour(s)`);
   };
 
   const requestNotificationPermission = async () => {
     if (!("Notification" in window)) {
-      alert("Your browser does not support notifications");
+      toast.error("Your browser does not support notifications");
       return;
     }
 
     const permission = await Notification.requestPermission();
 
     if (permission === "granted") {
-      alert("Notifications enabled");
+      toast.success("Notifications enabled");
     } else {
-      alert("Notification permission denied");
+      toast.warning("Notification permission denied");
     }
   };
 
   const saveReminder = () => {
     localStorage.setItem("reminderTime", reminderTime);
     localStorage.setItem("reminderSubject", reminderSubject);
-    alert(`Reminder saved for ${reminderTime}`);
+    toast.success(`Reminder saved for ${reminderTime}`);
 
     if (Notification.permission === "granted") {
       new Notification("Study Reminder Saved", {
@@ -901,12 +917,12 @@ function App() {
 
   const analyzeResume = async () => {
     if (!targetRole) {
-      alert("Please enter target role");
+      toast.warning("Please enter target role");
       return;
     }
 
     if (!resumeText && !resumeFile) {
-      alert("Please upload resume file or paste resume text");
+      toast.warning("Please upload resume file or paste resume text");
       return;
     }
 
@@ -929,9 +945,10 @@ function App() {
 
       const data = await response.json();
       setResumeAnalysis(data.analysis);
+      toast.success("Resume analysis completed");
       addActivity("📄", `Analyzed resume for ${targetRole}`);
     } catch (error) {
-      alert("Resume analysis failed.");
+      toast.error("Resume analysis failed.");
       console.log(error);
     } finally {
       setResumeLoading(false);
@@ -940,7 +957,7 @@ function App() {
 
   const downloadResumePDF = () => {
     if (!resumeAnalysis) {
-      alert("Analyze resume first");
+      toast.warning("Analyze resume first");
       return;
     }
 
@@ -982,7 +999,7 @@ function App() {
 
   const generateQuiz = async () => {
     if (!quizSubject) {
-      alert("Please enter quiz subject");
+      toast.warning("Please enter quiz subject");
       return;
     }
 
@@ -1004,8 +1021,9 @@ function App() {
 
       const data = await response.json();
       setQuiz(data.quiz);
+      toast.success("Quiz generated successfully");
     } catch (error) {
-      alert("Quiz generation failed.");
+      toast.error("Quiz generation failed.");
       console.log(error);
     } finally {
       setQuizLoading(false);
@@ -1029,6 +1047,7 @@ function App() {
     });
 
     setScore(marks);
+    toast.success(`Quiz submitted: ${marks}/${quiz.length}`);
     addActivity("📝", `Completed ${quizSubject || "AI"} quiz: ${marks}/${quiz.length}`);
   };
 
@@ -1053,7 +1072,7 @@ function App() {
 
   const saveManualMemory = async () => {
     if (!manualMemory.trim()) {
-      alert("Type something for AI to remember");
+      toast.warning("Type something for AI to remember");
       return;
     }
 
@@ -1072,15 +1091,16 @@ function App() {
       const data = await response.json();
 
       if (!data.success) {
-        alert(data.message || "Could not save memory");
+        toast.error(data.message || "Could not save memory");
         return;
       }
 
       setAiMemory(data.memories || []);
+      toast.success("AI memory saved");
       setManualMemory("");
       addActivity("🧠", "Saved AI memory");
     } catch (error) {
-      alert("Unable to save memory");
+      toast.error("Unable to save memory");
       console.log(error);
     }
   };
@@ -1098,10 +1118,11 @@ function App() {
 
       if (data.success) {
         setAiMemory([]);
+        toast.success("AI memory cleared");
         addActivity("🧹", "Cleared AI memory");
       }
     } catch (error) {
-      alert("Unable to clear memory");
+      toast.error("Unable to clear memory");
       console.log(error);
     }
   };
@@ -1142,7 +1163,7 @@ function App() {
       const data = await response.json();
 
       if (!data.success) {
-        alert(data.message || "Chat not found");
+        toast.error(data.message || "Chat not found");
         return;
       }
 
@@ -1158,7 +1179,7 @@ function App() {
           : [{ sender: "ai", text: "This chat is empty. Continue asking questions." }]
       );
     } catch (error) {
-      alert("Unable to open chat history");
+      toast.error("Unable to open chat history");
       console.log(error);
     } finally {
       setChatHistoryLoading(false);
@@ -1176,7 +1197,7 @@ function App() {
       const data = await response.json();
 
       if (!data.success) {
-        alert(data.message || "Could not delete chat");
+        toast.error(data.message || "Could not delete chat");
         return;
       }
 
@@ -1184,9 +1205,10 @@ function App() {
         startNewChat();
       }
 
+      toast.success("Chat deleted");
       loadChatSessions();
     } catch (error) {
-      alert("Unable to delete chat");
+      toast.error("Unable to delete chat");
       console.log(error);
     }
   };
@@ -1205,7 +1227,7 @@ function App() {
 
   const sendChatMessage = async () => {
     if (!chatInput.trim()) {
-      alert("Please type your question");
+      toast.warning("Please type your question");
       return;
     }
 
@@ -1288,6 +1310,15 @@ function App() {
   if (!currentUser) {
     return (
       <div className={darkMode ? "auth-page dark-mode" : "auth-page"}>
+        <ToastContainer
+          position="top-right"
+          autoClose={3000}
+          hideProgressBar={false}
+          newestOnTop
+          closeOnClick
+          pauseOnHover
+          theme={darkMode ? "dark" : "light"}
+        />
         <div className="auth-card">
           <div className="auth-logo">📚</div>
 
@@ -1360,6 +1391,15 @@ function App() {
 
   return (
     <div className={darkMode ? "app dark-mode" : "app"}>
+      <ToastContainer
+        position="top-right"
+        autoClose={3000}
+        hideProgressBar={false}
+        newestOnTop
+        closeOnClick
+        pauseOnHover
+        theme={darkMode ? "dark" : "light"}
+      />
       <button
         className="mobile-menu-btn"
         type="button"
@@ -1650,10 +1690,16 @@ function App() {
                 <div className="chat-box chatgpt-box">
                   {chatMessages.map((msg, index) => (
                     <div
-                      className={msg.sender === "user" ? "chat-message user-message" : "chat-message ai-message"}
+                      className={msg.sender === "user" ? "chat-message user-message" : "chat-message ai-message markdown-chat-message"}
                       key={index}
                     >
-                      <p>{msg.text}</p>
+                      {msg.sender === "ai" ? (
+                        <div className="markdown-message">
+                          <ReactMarkdown>{msg.text}</ReactMarkdown>
+                        </div>
+                      ) : (
+                        <p>{msg.text}</p>
+                      )}
                     </div>
                   ))}
                   {chatLoading && (
