@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import jsPDF from "jspdf";
+import { jsPDF } from "jspdf";
 import Calendar from "react-calendar";
 import "react-calendar/dist/Calendar.css";
 import ReactMarkdown from "react-markdown";
