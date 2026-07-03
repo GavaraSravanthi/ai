@@ -343,7 +343,7 @@ const response = await fetch(`https://ai-backend-t6mt.onrender.com/profile/${cur
 
     try {
       setProfileSaving(true);
-      const response = await fetch(`http://https://ai-backend-t6mt.onrender.com:5000/profile/${currentUser.id}`, {
+      const response = await fetch(`https://ai-backend-t6mt.onrender.com/profile/${currentUser.id}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json"
@@ -391,7 +391,7 @@ const response = await fetch(`https://ai-backend-t6mt.onrender.com/profile/${cur
           ? { email: authEmail, password: authPassword }
           : { name: authName, email: authEmail, password: authPassword };
 
-      const response = await fetch(`http://https://ai-backend-t6mt.onrender.com:5000/${endpoint}`, {
+      const response = await fetch(`https://ai-backend-t6mt.onrender.com/${endpoint}`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json"
@@ -481,7 +481,7 @@ const response = await fetch(`https://ai-backend-t6mt.onrender.com/profile/${cur
       setPlan("");
       setCompletedDays([]);
 
-      const response = await fetch("http://https://ai-backend-t6mt.onrender.com:5000/generate-plan", {
+      const response = await fetch("https://ai-backend-t6mt.onrender.com/generate-plan", {
         method: "POST",
         headers: {
           "Content-Type": "application/json"
@@ -559,7 +559,7 @@ const response = await fetch(`https://ai-backend-t6mt.onrender.com/profile/${cur
       setNotesLoading(true);
       setNotes("");
 
-      const response = await fetch("http://https://ai-backend-t6mt.onrender.com:5000/generate-notes", {
+      const response = await fetch("https://ai-backend-t6mt.onrender.com/generate-notes", {
         method: "POST",
         headers: {
           "Content-Type": "application/json"
@@ -626,7 +626,7 @@ const response = await fetch(`https://ai-backend-t6mt.onrender.com/profile/${cur
       setCurrentFlashcard(0);
       setShowFlashAnswer(false);
 
-      const response = await fetch("http://https://ai-backend-t6mt.onrender.com:5000/generate-flashcards", {
+      const response = await fetch("https://ai-backend-t6mt.onrender.com/generate-flashcards", {
         method: "POST",
         headers: {
           "Content-Type": "application/json"
@@ -712,7 +712,7 @@ const response = await fetch(`https://ai-backend-t6mt.onrender.com/profile/${cur
       setCurrentInterview(0);
       setShowInterviewAnswer(false);
 
-      const response = await fetch("http://https://ai-backend-t6mt.onrender.com:5000/generate-interview", {
+      const response = await fetch("https://ai-backend-t6mt.onrender.com/generate-interview", {
         method: "POST",
         headers: {
           "Content-Type": "application/json"
@@ -792,7 +792,7 @@ const response = await fetch(`https://ai-backend-t6mt.onrender.com/profile/${cur
       return;
     }
 
-    const response = await fetch("http://https://ai-backend-t6mt.onrender.com:5000/save-plan", {
+    const response = await fetch("https://ai-backend-t6mt.onrender.com/save-plan", {
       method: "POST",
       headers: {
         "Content-Type": "application/json"
@@ -813,7 +813,7 @@ const response = await fetch(`https://ai-backend-t6mt.onrender.com/profile/${cur
   };
 
   const viewSavedPlans = async () => {
-    const response = await fetch("http://https://ai-backend-t6mt.onrender.com:5000/saved-plans");
+    const response = await fetch("https://ai-backend-t6mt.onrender.com/saved-plans");
     const data = await response.json();
     setSavedPlans(data);
   };
@@ -822,7 +822,7 @@ const response = await fetch(`https://ai-backend-t6mt.onrender.com/profile/${cur
     const confirmDelete = window.confirm("Delete this saved plan?");
     if (!confirmDelete) return;
 
-    const response = await fetch(`http://https://ai-backend-t6mt.onrender.com:5000/delete-plan/${id}`, {
+    const response = await fetch(`https://ai-backend-t6mt.onrender.com/delete-plan/${id}`, {
       method: "DELETE"
     });
 
@@ -930,7 +930,7 @@ const response = await fetch(`https://ai-backend-t6mt.onrender.com/profile/${cur
         formData.append("resume", resumeFile);
       }
 
-      const response = await fetch("http://https://ai-backend-t6mt.onrender.com:5000/analyze-resume", {
+      const response = await fetch("https://ai-backend-t6mt.onrender.com/analyze-resume", {
         method: "POST",
         body: formData
       });
@@ -1001,7 +1001,7 @@ const response = await fetch(`https://ai-backend-t6mt.onrender.com/profile/${cur
       setAnswers({});
       setScore(null);
 
-      const response = await fetch("http://https://ai-backend-t6mt.onrender.com:5000/generate-quiz", {
+      const response = await fetch("https://ai-backend-t6mt.onrender.com/generate-quiz", {
         method: "POST",
         headers: {
           "Content-Type": "application/json"
@@ -1049,7 +1049,7 @@ const response = await fetch(`https://ai-backend-t6mt.onrender.com/profile/${cur
 
     try {
       setMemoryLoading(true);
-      const response = await fetch(`http://https://ai-backend-t6mt.onrender.com:5000/ai-memory/${userId}`);
+      const response = await fetch(`https://ai-backend-t6mt.onrender.com/ai-memory/${userId}`);
       const data = await response.json();
 
       if (data.success) {
@@ -1069,7 +1069,7 @@ const response = await fetch(`https://ai-backend-t6mt.onrender.com/profile/${cur
     }
 
     try {
-      const response = await fetch(`http://https://ai-backend-t6mt.onrender.com:5000/ai-memory/${currentUser.id}`, {
+      const response = await fetch(`https://ai-backend-t6mt.onrender.com/ai-memory/${currentUser.id}`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json"
@@ -1102,7 +1102,7 @@ const response = await fetch(`https://ai-backend-t6mt.onrender.com/profile/${cur
     if (!confirmClear) return;
 
     try {
-      const response = await fetch(`http://https://ai-backend-t6mt.onrender.com:5000/ai-memory/${currentUser.id}`, {
+      const response = await fetch(`https://ai-backend-t6mt.onrender.com/ai-memory/${currentUser.id}`, {
         method: "DELETE"
       });
 
@@ -1124,7 +1124,7 @@ const response = await fetch(`https://ai-backend-t6mt.onrender.com/profile/${cur
 
     try {
       setChatHistoryLoading(true);
-      const response = await fetch(`http://https://ai-backend-t6mt.onrender.com:5000/chat-sessions/${userId}`);
+      const response = await fetch(`https://ai-backend-t6mt.onrender.com/chat-sessions/${userId}`);
       const data = await response.json();
 
       if (data.success) {
@@ -1151,7 +1151,7 @@ const response = await fetch(`https://ai-backend-t6mt.onrender.com/profile/${cur
   const openChatSession = async (sessionId) => {
     try {
       setChatHistoryLoading(true);
-      const response = await fetch(`http://https://ai-backend-t6mt.onrender.com:5000/chat-session/${sessionId}`);
+      const response = await fetch(`https://ai-backend-t6mt.onrender.com/chat-session/${sessionId}`);
       const data = await response.json();
 
       if (!data.success) {
@@ -1183,7 +1183,7 @@ const response = await fetch(`https://ai-backend-t6mt.onrender.com/profile/${cur
     if (!confirmDelete) return;
 
     try {
-      const response = await fetch(`http://https://ai-backend-t6mt.onrender.com:5000/chat-session/${sessionId}`, {
+      const response = await fetch(`https://ai-backend-t6mt.onrender.com/chat-session/${sessionId}`, {
         method: "DELETE"
       });
       const data = await response.json();
@@ -1231,7 +1231,7 @@ const response = await fetch(`https://ai-backend-t6mt.onrender.com/profile/${cur
     try {
       setChatLoading(true);
 
-      const response = await fetch("http://https://ai-backend-t6mt.onrender.com:5000/ai-chat", {
+      const response = await fetch("https://ai-backend-t6mt.onrender.com/ai-chat", {
         method: "POST",
         headers: {
           "Content-Type": "application/json"
