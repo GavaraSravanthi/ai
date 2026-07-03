@@ -12,7 +12,7 @@ from google import genai
 load_dotenv()
 
 app = Flask(__name__)
-CORS(app)
+CORS(app, resources={r"/*": {"origins": "https://ai-6hbc.onrender.com"}})
 
 app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///study_plans.db"
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
